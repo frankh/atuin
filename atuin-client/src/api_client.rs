@@ -158,7 +158,7 @@ impl<'a> Client<'a> {
     pub async fn pro_upgrade(&self, callback_port: u16) -> Result<ProUpgradeResponse> {
         let url = format!("{}/pro/upgrade", self.sync_addr);
         let url = Url::parse(url.as_str())?;
-        let resp = self.client.post(url).json(&ProUpgradeRequest{ callback_port: callback_port }).send().await?;
+        let resp = self.client.post(url).json(&ProUpgradeRequest{ callback_port }).send().await?;
         if resp.status() != reqwest::StatusCode::OK {
             bail!(resp.status().to_string());
         }

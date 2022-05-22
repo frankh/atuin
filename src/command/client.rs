@@ -3,7 +3,7 @@ use std::path::PathBuf;
 use clap::{CommandFactory, Subcommand};
 use clap_complete::{generate, generate_to, Shell};
 use eyre::{Result, WrapErr};
-use open;
+
 
 use atuin_client::{database::Sqlite, settings::Settings};
 use atuin_common::utils::uuid_v4;

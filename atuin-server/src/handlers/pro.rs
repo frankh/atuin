@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use axum::{Extension, Json};
 use tracing::{debug, error, instrument};
 use eyre::{Result};
-use uuid::Uuid;
+
 
 use serde::{Deserialize};
 
@@ -13,9 +13,8 @@ use reqwest::{
 
 use super::{ErrorResponse, ErrorResponseStatus};
 use crate::{
-    database::{Database, Postgres},
+    database::{Postgres},
     models::{User},
-    settings::Settings,
 };
 
 use atuin_common::api::*;
@@ -81,5 +80,5 @@ pub async fn upgrade(
 
     debug!("checkout url {}", checkout_url);
 
-    Ok(Json(ProUpgradeResponse{checkout_url: checkout_url}))
+    Ok(Json(ProUpgradeResponse{checkout_url}))
 }

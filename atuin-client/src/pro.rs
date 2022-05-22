@@ -1,13 +1,12 @@
-use std::convert::TryInto;
 
-use chrono::prelude::*;
+
+
 use eyre::Result;
 
 use crate::{
     api_client,
-    database::Database,
-    encryption::{encrypt, load_encoded_key, load_key},
-    settings::{Settings, HISTORY_PAGE_SIZE},
+    encryption::{load_encoded_key},
+    settings::{Settings},
 };
 
 use atuin_common::api::{
@@ -21,5 +20,5 @@ pub async fn upgrade(settings: &Settings, callback_port: u16) -> Result<ProUpgra
         load_encoded_key(settings)?, // TODO: key not needed
     )?;
 
-    Ok(client.pro_upgrade(callback_port).await?)
+    client.pro_upgrade(callback_port).await
 }

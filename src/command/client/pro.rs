@@ -1,18 +1,16 @@
-use std::collections::HashMap;
+
 use std::future::Future;
 use std::net::SocketAddr;
 
-use chrono::{prelude::*, Duration};
-use chrono_english::parse_date_string;
+
+
 use clap::Parser;
-use cli_table::{format::Justify, print_stdout, Cell, Style, Table};
-use eyre::{bail, Result};
+
+use eyre::{Result};
 use tokio::sync::mpsc;
 
 use atuin_client::{
-    database::{current_context, Database},
-    history::History,
-    settings::{FilterMode, Settings},
+    settings::{Settings},
 };
 
 #[derive(Parser)]
@@ -27,12 +25,18 @@ async fn server() -> Result<(SocketAddr, impl Future<Output = ()> + 'static)> {
 
     // GET /hello/warp => 200 OK with body "Hello, warp!"
     let hello = warp::path!("success")
-        .map(move || { tx.try_send(()); format!("Subscription successful! You can close this tab and start using Atiun Pro!") });
+        .map(move || {
+            let resp = tx.try_send(());
+            if resp.is_err() {
+                panic!("Failed to send signal to channel listening for pro payment");
+            }
+            "Subscription successful! You can close this tab and start using Atiun Pro!".to_string()
+        });
 
     let (addr, server) = warp::serve(hello)
         .bind_with_graceful_shutdown(([127, 0, 0, 1], 0), async move {
              rx.recv().await;
-             ()
+
         });
 
     Ok((addr, server))
@@ -58,7 +62,7 @@ impl Cmd {
         open::that(upgrade_resp.checkout_url).unwrap();
         server.await;
         println!("Done!");
-        println!("");
+        println!();
         println!("Atuin Pro Activated! 🐢");
         Ok(())
     }
