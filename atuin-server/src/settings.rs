@@ -35,6 +35,8 @@ impl Settings {
             .set_default("port", 8888)?
             .set_default("open_registration", false)?
             .set_default("max_history_length", 8192)?
+            .set_default("stripe_pk", "pk_test_51L1RSfDnXJakRqOzkUIyUFDBzJitjMT2RpBgZaLDnzZx2axLvuOzUu6QlVgPrtogXr9qbxK5ROlwctRCI6ri8kMQ00fO7116mk")?
+            .set_default("stripe_sk", "sk_test_51L1RSfDnXJakRqOz9J07ece3BWE8e0lg5Uy8eu07ixY3rkdhNTmPTKd3vfh9cM2GLfK8I9Uqvxfdbsx6z05p2KGN00b94GbqfI")?
             .add_source(
                 Environment::with_prefix("atuin")
                     .prefix_separator("_")

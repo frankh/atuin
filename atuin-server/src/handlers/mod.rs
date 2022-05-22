@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 
 pub mod history;
 pub mod user;
+pub mod pro;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 

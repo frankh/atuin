@@ -3,6 +3,7 @@ use std::path::PathBuf;
 use clap::{CommandFactory, Subcommand};
 use clap_complete::{generate, generate_to, Shell};
 use eyre::{Result, WrapErr};
+use open;
 
 use atuin_client::{database::Sqlite, settings::Settings};
 use atuin_common::utils::uuid_v4;
@@ -16,6 +17,7 @@ mod import;
 mod init;
 mod search;
 mod stats;
+mod pro;
 
 #[derive(Subcommand)]
 #[clap(infer_subcommands = true)]
@@ -30,6 +32,9 @@ pub enum Cmd {
 
     /// Calculate statistics for your history
     Stats(stats::Cmd),
+
+    /// Upgrade to Atuin Pro
+    Pro(pro::Cmd),
 
     /// Output shell setup
     #[clap(subcommand)]
@@ -71,6 +76,7 @@ impl Cmd {
             Self::History(history) => history.run(&settings, &mut db).await,
             Self::Import(import) => import.run(&mut db).await,
             Self::Stats(stats) => stats.run(&mut db, &settings).await,
+            Self::Pro(pro) => pro.run(&settings).await,
             Self::Init(init) => {
                 init.run();
                 Ok(())

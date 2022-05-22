@@ -66,6 +66,7 @@ pub fn router(postgres: Postgres, settings: Settings) -> Router {
         .route("/user/:username", get(handlers::user::get))
         .route("/register", post(handlers::user::register))
         .route("/login", post(handlers::user::login))
+        .route("/pro/upgrade", post(handlers::pro::upgrade))
         .fallback(teapot.into_service())
         .layer(
             ServiceBuilder::new()

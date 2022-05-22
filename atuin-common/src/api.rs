@@ -53,3 +53,13 @@ pub struct SyncHistoryRequest {
 pub struct SyncHistoryResponse {
     pub history: Vec<String>,
 }
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct ProUpgradeRequest {
+    pub callback_port: u16,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct ProUpgradeResponse {
+    pub checkout_url: String,
+}
