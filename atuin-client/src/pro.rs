@@ -13,12 +13,12 @@ use atuin_common::api::{
     ProUpgradeResponse
 };
 
-pub async fn upgrade(settings: &Settings, callback_port: u16) -> Result<ProUpgradeResponse> {
+pub async fn upgrade(settings: &Settings, uuid: String, callback_port: u16) -> Result<ProUpgradeResponse> {
     let client = api_client::Client::new(
         &settings.sync_address,
         &settings.session_token,
         load_encoded_key(settings)?, // TODO: key not needed
     )?;
 
-    client.pro_upgrade(callback_port).await
+    client.pro_upgrade(uuid, callback_port).await
 }

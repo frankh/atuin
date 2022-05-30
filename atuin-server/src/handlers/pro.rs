@@ -44,6 +44,7 @@ pub async fn upgrade(
     map.insert("mode", "subscription");
     map.insert("subscription_data[trial_period_days]", "30");
     map.insert("subscription_data[metadata][user_id]", &user_id);
+    map.insert("subscription_data[metadata][uuid]", &req.uuid);
     map.insert("client_reference_id", &user_id);
 
     let client = reqwest::Client::new();

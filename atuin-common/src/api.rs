@@ -57,6 +57,7 @@ pub struct SyncHistoryResponse {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ProUpgradeRequest {
     pub callback_port: u16,
+    pub uuid: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

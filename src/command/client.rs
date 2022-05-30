@@ -34,6 +34,7 @@ pub enum Cmd {
     Stats(stats::Cmd),
 
     /// Upgrade to Atuin Pro
+    #[clap(subcommand)]
     Pro(pro::Cmd),
 
     /// Output shell setup

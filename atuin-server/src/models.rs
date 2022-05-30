@@ -37,6 +37,14 @@ pub struct Session {
     pub token: String,
 }
 
+#[derive(sqlx::FromRow)]
+pub struct Subscription {
+    pub id: i64,
+    pub user_id: i64,
+    pub subscription_id: String,
+    pub paid_until: chrono::NaiveDateTime,
+}
+
 pub struct NewUser {
     pub username: String,
     pub email: String,
@@ -46,4 +54,8 @@ pub struct NewUser {
 pub struct NewSession {
     pub user_id: i64,
     pub token: String,
+}
+
+pub struct NewSubscription {
+    pub user_id: i64,
 }
