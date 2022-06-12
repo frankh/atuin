@@ -13,8 +13,8 @@ use reqwest::{
 
 use super::{ErrorResponse, ErrorResponseStatus};
 use crate::{
-    database::{Postgres},
-    models::{User},
+    database::{Database, Postgres},
+    models::{User, NewSubscription},
 };
 
 use atuin_common::api::*;
@@ -28,13 +28,14 @@ struct StripeCheckoutSessionResponse {
 pub async fn upgrade(
     Json(req): Json<ProUpgradeRequest>,
     user: User,
-    _db: Extension<Postgres>,
+    db: Extension<Postgres>,
 ) -> Result<Json<ProUpgradeResponse>, ErrorResponseStatus<'static>> {
     debug!("request to upgrade to pro 💸");
 
     let success_url = format!("http://127.0.0.1:{}/success", req.callback_port);
     let cancel_url = format!("http://127.0.0.1:{}/cancel", req.callback_port);
     let user_id = user.id.to_string();
+    let idempotency_key = req.uuid.clone();
     let mut map = HashMap::new();
     map.insert("line_items[0][price]", "price_1L1RXVDnXJakRqOztV2nezpo");
     map.insert("line_items[0][quantity]", "1");
@@ -46,8 +47,22 @@ pub async fn upgrade(
     map.insert("subscription_data[metadata][user_id]", &user_id);
     map.insert("subscription_data[metadata][uuid]", &req.uuid);
     map.insert("client_reference_id", &user_id);
-
     let client = reqwest::Client::new();
+
+    let new_subscription = NewSubscription {
+        user_id: user.id,
+        idempotency_key: idempotency_key,
+    };
+
+    let _sub_id = match db.add_subscription(&new_subscription).await {
+        Ok(id) => id,
+        Err(e) => {
+            error!("failed to add user: {}", e);
+            return Err(
+                ErrorResponse::reply("failed to add user").with_status(StatusCode::BAD_REQUEST)
+            );
+        }
+    };
 
     let user_name = "sk_test_51L1RSfDnXJakRqOz9J07ece3BWE8e0lg5Uy8eu07ixY3rkdhNTmPTKd3vfh9cM2GLfK8I9Uqvxfdbsx6z05p2KGN00b94GbqfI".to_string();
     let password: Option<String> = None;

@@ -8,7 +8,7 @@ use tracing::{debug, instrument, warn};
 
 use super::{
     calendar::{TimePeriod, TimePeriodInfo},
-    models::{History, NewHistory, NewSession, NewUser, Session, User},
+    models::{History, NewHistory, NewSession, NewUser, Session, User, NewSubscription},
 };
 use crate::settings::Settings;
 use crate::settings::HISTORY_PAGE_SIZE;
@@ -24,6 +24,7 @@ pub trait Database {
     async fn get_user(&self, username: &str) -> Result<User>;
     async fn get_user_session(&self, u: &User) -> Result<Session>;
     async fn add_user(&self, user: &NewUser) -> Result<i64>;
+    async fn add_subscription(&self, sub: &NewSubscription) -> Result<i64>;
 
     async fn count_history(&self, user: &User) -> Result<i64>;
     async fn count_history_cached(&self, user: &User) -> Result<i64>;
@@ -305,6 +306,26 @@ impl Database for Postgres {
         .bind(username)
         .bind(email)
         .bind(password)
+        .fetch_one(&self.pool)
+        .await?;
+
+        Ok(res.0)
+    }
+
+
+    #[instrument(skip_all)]
+    async fn add_subscription(&self, sub: &NewSubscription) -> Result<i64> {
+        let user_id: &i64 = &sub.user_id;
+        let idempotency_key: &str = &sub.idempotency_key;
+
+        let res: (i64,) = sqlx::query_as(
+            "insert into subscriptions
+                (user_id, idempotency_key)
+            values($1, $2)
+            returning id",
+        )
+        .bind(user_id)
+        .bind(idempotency_key)
         .fetch_one(&self.pool)
         .await?;
 

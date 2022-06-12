@@ -41,6 +41,7 @@ pub struct Session {
 pub struct Subscription {
     pub id: i64,
     pub user_id: i64,
+    pub idempotency_key: String,
     pub subscription_id: String,
     pub paid_until: chrono::NaiveDateTime,
 }
@@ -58,4 +59,5 @@ pub struct NewSession {
 
 pub struct NewSubscription {
     pub user_id: i64,
+    pub idempotency_key: String,
 }
